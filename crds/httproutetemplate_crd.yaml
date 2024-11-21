@@ -1,0 +1,73 @@
+{{ if and .Values.global.crds.install .Values.agent.rtfd.watch.components.routes.enabled }}
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.3
+  name: httproutetemplates.rtf.mulesoft.com
+spec:
+  group: rtf.mulesoft.com
+  names:
+    kind: HTTPRouteTemplate
+    listKind: HTTPRouteTemplateList
+    plural: httproutetemplates
+    shortNames:
+      - hrt
+      - hrts
+    singular: httproutetemplate
+  scope: Namespaced
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          description: |-
+            HTTPRouteTemplate represents a set of Resources that will be created
+            alongside an Application that is deployed with a configured URL
+            matching one of the BaseEndpoints.
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: HttpRouteTemplateSpec defines the specification for HTTPRouteTemplates
+              properties:
+                baseEndpoints:
+                  description: |-
+                    BaseEndpoints describes a list of endpoints that are associated with the Resources below.
+                    Application developers will choose from a list of base endpoints during application deployment
+                    and optionally customize the path and subdomain (when applicable)
+                  items:
+                    type: string
+                  type: array
+                resources:
+                  description: |-
+                    Resources describes a list of Kubernetes resource templates that will be created
+                    for every matching Application Ingress endpoint.
+                    The templates can use supported helper functions
+                  items:
+                    type: string
+                  type: array
+              required:
+                - baseEndpoints
+                - resources
+              type: object
+          required:
+            - spec
+          type: object
+      served: true
+      storage: true
+{{ end }}
